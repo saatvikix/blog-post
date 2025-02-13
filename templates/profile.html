@@ -1,0 +1,106 @@
+{% extends 'index.html' %}
+{% block title %}
+<title>Quillwave | Home</title>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="../static/css/profile.css">
+{% endblock %}
+
+
+{% block nav_items %}
+<div class="navItems"><a href="{{ url_for('home') }}">Home</a></div>
+<div class="navItems"><a href="">Contact</a></div>
+{% endblock %}
+
+
+{% block content %}
+<section id="coverPhoto">
+    <div class="ProfilePic">
+        {% if profile_picture %}
+        <img src="data:image/jpeg;base64,{{ profile_picture }}" alt="Profile Picture">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/default-profile.png') }}" alt="Default Profile Picture">
+        {% endif %}
+    </div>
+</section>
+
+<section>
+    <div id="metaData">
+        <div class="metaDataKids">
+            <div>
+                <h3>{{ user.name }}</h3>
+            </div>
+            <div>
+                <img src="../static/images/icons/location.png" alt="">
+                <p id="place">{{ user.location if user.location else 'Location not set' }}</p>
+            </div>
+        </div>
+        <!-- <p>Base64 Image Data: {{ profile_picture[:50] }}...</p -->
+        <div id="numbersNcreate">
+            <section id="coverPhoto">
+                <div class="ProfilePic">
+                    <!-- Profile Picture Upload Form -->
+                    {% if profile_picture %}
+                    <img src="data:image/jpeg;base64,{{ profile_picture }}" alt="Profile Picture"
+                        onload="this.src += '?' + new Date().getTime();">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default-profile.png') }}" alt="Default Profile Picture">
+                {% endif %}
+                    <form action="{{ url_for('update_profile_picture') }}" method="POST" enctype="multipart/form-data">
+                        <label for="profile-upload" class="upload-btn">Change Profile Picture</label>
+                        <input type="file" id="profile-upload" name="profile_picture" accept="image/*"
+                            onchange="this.form.submit()">
+                    </form>
+
+                </div>`
+            </section>
+            <div class="numbers">
+                <div>
+                    <h3>{{ posts|length }}</h3>
+                    <p>Posts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<main>
+    <div class="masterContainer">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="postCards">
+                    <div class="trailerText">
+                        <h2>{{ post.title }}</h2>
+                        <hr>
+                        <p>{{ post.content[:200] }}...</p>
+                        <div class="trailerIcons">
+                            <button class="like-btn" data-post-id="{{ post.id }}">
+                                <img src="../static/images/icons/like2.png" alt="Like"
+                                    class="like-icon {% if session['session-user'] in post.liked_by %}liked{% endif %}">
+                            </button>
+                            <span id="like-count-{{ post.id }}">{{ post.likes }}</span>
+                            <button class="iconsButton comment-btn" data-post-id="{{ post.id }}">
+                                <img src="../static/images/icons/comment2.png" alt="Comment" class="icons">
+                            </button>
+                            <span id="comment-count-{{ post.id }}">{{ post.comments|length }}</span>
+                            <button class="iconsButton share-btn" data-post-id="{{ post.id }}">
+                                <img src="../static/images/icons/share2.png" alt="Share" class="icons">
+                            </button>
+                            <form action="{{ url_for('bookmark_post', post_id=post.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="iconsButton">
+                                    <img src="../static/images/icons/save2.png" alt="Bookmark" class="icons">
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No posts yet. Start creating!</p>
+        {% endif %}
+    </div>
+    
+</main>
+{% endblock %}

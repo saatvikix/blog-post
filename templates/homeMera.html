@@ -1,0 +1,95 @@
+{% extends 'index.html' %}
+{% block title %}
+<title>Quillwave | Home</title>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="static/css/home.css">
+<link rel="stylesheet" href="../static/css/comment.css">
+<link rel="stylesheet" href="../static/css/share.css">
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="masterContainer" id="onYourMind">
+        <section>
+            <div class="textCreator">
+                <img src="../static/images/Saatvik.jpg" alt="" class="profilePic">
+                <a href="{{ url_for('create' ) }}"><input name="" id="" placeholder="What's on your mind? "></a>
+            </div>
+            <div class="features">
+                <div>
+                    <button>
+                        <a href="{{ url_for('bookmarks') }}"><img src="../static/images/icons/save2.png" alt=""></a>
+                    </button>
+                    <button>
+                        <img src="../static/images/icons/attatch.png" alt="">
+                    </button>
+                    <button>
+                        <a href="https://www.google.com/maps"><img src="../static/images/icons/location.png" alt=""></a>
+                    </button>
+                </div>
+                <div>
+                    <button>Post</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <h3>For You</h3>
+    <div class="masterContainer" id="allPosts">
+        {% for post in posts %}
+        <section class="postsSection">
+            <div class="metaData">
+                <div>
+                    <img src="{{ url_for('static', filename='images/default-profile.png') }}" alt="Profile" class="profilePic">
+                </div>
+                <div class="nameAndTime">
+                    <h4>{{ post.author }}</h4>
+                    <p>{{ post.timestamp.strftime('%B %d, %Y, %I:%M %p') }}</p>
+                </div>
+            </div>
+            <div class="blogTrailer">
+                <div class="trailerText">
+                    <h2><a href="{{ url_for('view_post',post_id=post.id ) }}" style="text-decoration: none; color: white;">{{ post.title }}</a></h2>
+                    <hr>
+                    <p>{{ post.content[:200] }}...</p>
+                    <div class="trailerIcons">
+                        <button class="like-btn" data-post-id="{{ post.id }}">
+                            <img src="../static/images/icons/like2.png" alt="Like" class="like-icon">
+                        </button>
+                        <span id="like-count-{{ post.id }}">{{ post.likes }}</span>
+                        <button class="iconsButton comment-btn" data-post-id="{{ post.id }}">
+                            <img src="../static/images/icons/comment2.png" alt="Comment" class="icons">
+                        </button>
+                        <span id="comment-count-{{ post.id }}">{{ post.comments|length }}</span>
+                        <button class="iconsButton share-btn" data-post-id="{{ post.id }}">
+                            <img src="../static/images/icons/share2.png" alt="Share" class="icons">
+                        </button>
+                        <form action="{{ url_for('bookmark_post', post_id=post.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="iconsButton">
+                                <img src="../static/images/icons/save2.png" alt="Bookmark" class="icons">
+                            </button>
+                        </form>
+                        {% if session["user-name"] == post.author %}
+                        <div class="editIcons">
+                            <a class="iconsButton" href="{{ url_for('updateFunction',id=post.id ) }}"><img src="../static/images/icons/edit.png" alt="" class="icons"></a>
+                            <a class="iconsButton" href="{{ url_for('deleteFunction',id=post.id ) }}"><img src="../static/images/icons/delete.png" alt="" class="icons"></a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if post.image %}
+                <div class="trailerImage">
+                    <img src="data:image/jpeg;base64,{{ post.image }}" alt="Post Image" style="width: 300px; height: auto;">
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endfor %}
+        
+        <!-- Static Curated Blog Posts -->
+        {% include 'curated_posts.html' %}
+    </div>
+</main>
+{% endblock %}

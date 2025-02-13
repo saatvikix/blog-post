@@ -1,0 +1,61 @@
+{% for post in curated_posts %}
+<section class="postsSection">
+    <div class="metaData">
+        <div>
+            <img src="../static/images/jamie.jpeg" alt="" class="profilePic">
+        </div>
+        <div class="nameAndTime">
+            <h4>{{ post.author }}</h4>
+            <p>{{ post.timestamp }}</p>
+        </div>
+    </div>
+    <div class="blogTrailer">
+        <div class="trailerText">
+            <!-- ✅ Make the title a clickable link -->
+            <h2>
+                <a href="{{ url_for('view_curated_post', post_id=loop.index) }}" 
+                   style="text-decoration: none; color: white;">
+                    {{ post.title }}
+                </a>
+            </h2>
+            <hr>
+            <p>{{ post.content }}</p>
+            <div class="trailerIcons">
+                <button class="like-btn" data-post-id="curated-{{ loop.index }}">
+                    <img src="../static/images/icons/like2.png" alt="" class="like-icon">
+                </button>
+                <span id="like-count-curated-{{ loop.index }}">0</span>
+
+                <button class="iconsButton comment-btn" data-post-id="curated-{{ loop.index }}">
+                    <img src="../static/images/icons/comment2.png" alt="" class="icons">
+                </button>
+                <span id="comment-count-curated-{{ loop.index }}">0</span>
+
+                <button class="iconsButton share-btn" data-post-id="curated-{{ loop.index }}">
+                    <img src="../static/images/icons/share2.png" alt="" class="icons">
+                </button>
+
+                <form action="{{ url_for('bookmark_post', post_id=loop.index) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="iconsButton">
+                        <img src="../static/images/icons/save2.png" alt="Bookmark" class="icons">
+                    </button>
+                </form>
+                
+                
+            </div>
+        </div>
+        <div class="trailerImage">
+            <img src="{{ post.image }}" alt="">
+        </div>
+    </div>
+
+    <div class="comment-section" id="comment-section-curated-{{ loop.index }}" style="display: none;">
+        <div class="comments-list" id="comments-list-curated-{{ loop.index }}">
+        </div>
+        <form class="comment-form" data-post-id="curated-{{ loop.index }}">
+            <input type="text" name="content" placeholder="Add a comment..." required>
+            <button type="submit">Post</button>
+        </form>
+    </div>
+</section>
+{% endfor %}
